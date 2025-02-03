@@ -1,0 +1,46 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: installplan-approver
+spec:
+  template:
+    spec:
+      containers:
+        - image: registry.redhat.io/openshift4/ose-cli:v4.4
+          command:
+            - /bin/bash
+            - -c
+            - |
+              export HOME=/tmp/approver
+              #SUBS="openshift-compliance openshift-gitops-operator"
+              SUBS="openshift-compliance"
+
+              for i in $SUBS
+              do
+
+              IP=$(oc get sub -n $i -o jsonpath='{.items[0].status.installplan.name}')
+
+                 if [ $(oc get installplan $IP -n $i -o jsonpath='{.spec.approved}') == false ]
+
+                 then
+                   echo "Approving $i operator install -- $IP in $NAMESPACE"
+                   oc patch installplan $IP -n $i --type='merge' -p '{"spec": {"approved": true}}'
+                   echo ""
+                 else
+                    echo "No install plans to approve in $NAMESPACE"
+                 fi
+              done
+          imagePullPolicy: Always
+          name: installplan-approver
+          env:
+            - name: SLEEP
+              value: "20"
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+      dnsPolicy: ClusterFirst
+      restartPolicy: OnFailure
+      serviceAccount: installplan-approver-job
+      serviceAccountName: installplan-approver-job
+      terminationGracePeriodSeconds: 30
