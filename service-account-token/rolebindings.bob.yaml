@@ -1,7 +1,8 @@
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: RoleBinding
 metadata:
   name: bob-cluster-admin
+  namespace: test-app
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -9,4 +10,3 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: bob
-    namespace: test-app
