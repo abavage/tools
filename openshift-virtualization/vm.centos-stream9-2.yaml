@@ -32,7 +32,6 @@ spec:
         vm.kubevirt.io/flavor: small
         vm.kubevirt.io/os: centos-stream9
         vm.kubevirt.io/workload: server
-      creationTimestamp: null
       labels:
         kubevirt.io/domain: centos-stream9-2
         kubevirt.io/size: small
