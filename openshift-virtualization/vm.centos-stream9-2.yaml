@@ -53,7 +53,7 @@ spec:
               bus: virtio
             name: cloudinitdisk
           interfaces:
-          - macAddress: 02:6b:62:00:00:02
+          - macAddress: 02:6b:62:00:00:03
             masquerade: {}
             model: virtio
             name: default
