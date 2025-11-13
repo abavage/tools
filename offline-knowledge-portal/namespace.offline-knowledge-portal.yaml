@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    openshift.io/description: ""
+    openshift.io/display-name: offline-knowledge-portal
+  labels:
+    kubernetes.io/metadata.name: offline-knowledge-portal
+  name: offline-knowledge-portal

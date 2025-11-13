@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: offline-knowledge-portal
+  name: offline-knowledge-portal
+  namespace: offline-knowledge-portal
+spec:
+  ports:
+  - name: 8080-8080
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: offline-knowledge-portal
+  sessionAffinity: None
+  type: ClusterIP
