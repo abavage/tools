@@ -1,0 +1,156 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ab-efs-postgresql
+  name: ab-efs-postgresql
+  namespace: andrew-2
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: ab-efs-postgresql
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: ab-efs-postgresql
+    spec:
+      containers:
+      - env:
+        - name: POSTGRESQL_USER
+          valueFrom:
+            secretKeyRef:
+              key: database-user
+              name: postgresql
+        - name: POSTGRESQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: database-password
+              name: postgresql
+        - name: POSTGRESQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              key: database-name
+              name: postgresql
+        image: image-registry.openshift-image-registry.svc:5000/openshift/postgresql@sha256:ed2da0eed3f495f5455f490cdf7f7943420f64b0cf541271a2d315a3f9e9744c
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - /usr/libexec/check-container
+            - --live
+          failureThreshold: 3
+          initialDelaySeconds: 120
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 10
+        name: postgresql
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - /usr/libexec/check-container
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            memory: 512Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/lib/pgsql/data
+          name: postgresql-data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        runAsUser: 1001
+        #runAsGroup: 1001
+        fsGroup: 1001
+      serviceAccount: postgresql
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: postgresql-data
+        persistentVolumeClaim:
+          claimName: postgresql
+---
+apiVersion: v1
+data:
+  database-name: c2FtcGxlZGI=
+  database-password: c3VuMTIz
+  database-user: YW5kcmV3
+kind: Secret
+metadata:
+  name: postgresql
+  namespace: andrew-2
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    template: postgresql-persistent-template
+  name: postgresql
+  namespace: andrew-2
+spec:
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: postgresql
+    port: 5432
+    protocol: TCP
+    targetPort: 5432
+  selector:
+    name: postgresql
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgresql
+  #name: one
+  namespace: andrew-2
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: efs-csi
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: postgresql
+  namespace: andrew-2
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: postgresql-nonroot
+  namespace: andrew-2
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  #name: system:openshift:scc:anyuid
+  name: system:openshift:scc:nonroot
+subjects:
+- kind: ServiceAccount
+  name: postgresql
+  namespace: andrew-2
