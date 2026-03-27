@@ -1,0 +1,74 @@
+# flow
+1) Use RoleA trustpolicy to become RoleA
+2) RoleA uses it's permission policy to request access to RoleB
+3) RoleB uses it's trust policy to veriy it knows and trusts RoleA
+4) STS issues temporary creds for RoleB
+5) The entity (application/user) used RoleB permissions policy to read from S3
+
+# steps
+1) assume roleA as an entity (user or application)
+2) set the env vars 
+3) check that it assumed the correct role
+4) assume roleB AS roleA
+5) set the env vars
+6) check that it assumed the correct role
+7) list the buckets
+
+# files
+role-a-trust.json - what/who can use this role
+role-a-policy.json - what can this role do eg assume a role
+role-b-trust.json - what/who can use this role
+role-b-policy.json - what can this role do eg list buckets
+
+
+# Create roleA with trust
+aws iam create-role --role-name roleA --assume-role-policy-document file://role-a-trust.json
+
+# add the policy to the role in one step
+aws iam put-role-policy --role-name roleA  --policy-name roleA-policy --policy-document file://role-a-policy.json
+
+# Create roleB with trust
+aws iam create-role --role-name roleB --assume-role-policy-document file://role-b-trust.json
+
+# add the policy to the role in one step
+aws iam put-role-policy --role-name roleB  --policy-name roleB-policy --policy-document file://role-b-policy.json
+
+# assume the role
+aws sts assume-role --role-arn arn:aws:iam::123456789abc:role/roleA --role-session-name roleA-session
+
+# set it up
+export AWS_ACCESS_KEY_ID=
+export AWS_SECRET_ACCESS_KEY=
+export AWS_SESSION_TOKEN=
+
+# what role
+aws sts get-caller-identity
+{
+    "UserId": "AROAYEKP5ZAA5GYWYBSXC:roleA",
+    "Account": "123456789abc",
+    "Arn": "arn:aws:sts::123456789abc:assumed-role/roleA/roleA"
+}
+
+
+### SECOND STEP ASSUME roleB
+
+aws sts assume-role --role-arn arn:aws:iam::123456789abc:role/roleB --role-session-name roleB-session
+
+# set it up
+export AWS_ACCESS_KEY_ID=
+export AWS_SECRET_ACCESS_KEY=
+export AWS_SESSION_TOKEN=
+
+# what role
+aws sts get-caller-identity
+{
+    "UserId": "AROAYEKP5ZAAVJM6MQGKW:roleB",
+    "Account": "123456789abc",
+    "Arn": "arn:aws:sts::123456789abc:assumed-role/roleB/roleB-session"
+}
+
+# List the buckets
+aws s3 ls s3://this-that-stuff
+
+
+ 

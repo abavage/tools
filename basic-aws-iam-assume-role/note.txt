@@ -1,0 +1,26 @@
+# files
+trust.json - trust policy
+policy.json - what it can do
+
+
+# create the role and trust
+aws iam create-role --role-name s3rolebasic  --assume-role-policy-document file://trust.json
+
+# add the policy to the role in one step
+aws iam put-role-policy --role-name s3rolebasic --policy-name s3rolebasicpolicy --policy-document file://policy.json
+
+# assume the role as the user -- someuser from Principal in trust.json
+aws sts assume-role --role-arn arn:aws:iam::123456789abc:role/s3rolebasic --role-session-name s3rolebasic
+
+# set it all up
+export AWS_ACCESS_KEY_ID=
+export AWS_SECRET_ACCESS_KEY=
+export AWS_SESSION_TOKEN=
+
+# what role
+aws sts get-caller-identity
+
+# list it all
+aws s3 ls s3://this-that-stuff
+
+

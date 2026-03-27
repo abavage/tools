@@ -1,0 +1,18 @@
+# Files
+ec2-trust-policy.json - sts assume trust policy
+s3-policy.json - the resources accessable
+
+# Create the Instance Role
+aws iam create-role --role-name EC2S3AccessRole --assume-role-policy-document file://ec2-trust-policy.json
+
+# Attach the S3 policy directly to the Instance Role
+aws iam put-role-policy --role-name EC2S3AccessRole --policy-name S3GetListPolicy --policy-document file://s3-policy.json
+
+# Create Instance Profile 
+aws iam create-instance-profile --instance-profile-name EC2S3InstanceProfile
+
+# add the role to the instance profile
+aws iam add-role-to-instance-profile --instance-profile-name EC2S3InstanceProfile --role-name EC2S3AccessRole
+
+# attach the instance profile to the instance
+aws ec2 associate-iam-instance-profile --instance-id <instance_id> --iam-instance-profile Name=EC2S3InstanceProfile
