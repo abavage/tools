@@ -1,3 +1,12 @@
+# create the policy
+aws iam create-policy --policy-name instance-s3readonly-policy --policy-document file://instance-policy.json --query 'Policy.Arn'
+
+# attach the policy to the role -- this is attached to the role s3readonlyrole
+aws iam attach-role-policy --policy-arn arn:aws:iam::559050246145:policy/instance-s3readonly-policy --role-name instance-s3readonly-role
+
+
+
+
 # flow
 1) Use RoleA trustpolicy to become RoleA
 2) RoleA uses it's permission policy to request access to RoleB
@@ -24,11 +33,19 @@ role-b-policy.json - what can this role do eg list buckets
 # Create roleA with trust
 aws iam create-role --role-name roleA --assume-role-policy-document file://role-a-trust.json
 
+## Optional create the policy and attach as a customer managed policy
+#aws iam create-policy --policy-name roleA-policy --policy-document file://role-a-policy.json --query 'Policy.Arn'
+#aws iam attach-role-policy --policy-arn arn:aws:iam::123456789abc:policy/roleA-policy --role-name roleA
+
 # add the policy to the role in one step - creates an inline policy
 aws iam put-role-policy --role-name roleA  --policy-name roleA-policy --policy-document file://role-a-policy.json
 
 # Create roleB with trust
 aws iam create-role --role-name roleB --assume-role-policy-document file://role-b-trust.json
+
+## Optional create the policy and attach as a customer managed policy
+#aws iam create-policy --policy-name roleB-policy --policy-document file://role-b-policy.json --query 'Policy.Arn'
+#aws iam attach-role-policy --policy-arn arn:aws:iam::123456789abc:policy/roleB-policy --role-name roleB
 
 # add the policy to the role in one step - creates an inline policy
 aws iam put-role-policy --role-name roleB  --policy-name roleB-policy --policy-document file://role-b-policy.json
