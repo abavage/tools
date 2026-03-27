@@ -24,13 +24,13 @@ role-b-policy.json - what can this role do eg list buckets
 # Create roleA with trust
 aws iam create-role --role-name roleA --assume-role-policy-document file://role-a-trust.json
 
-# add the policy to the role in one step
+# add the policy to the role in one step - creates an inline policy
 aws iam put-role-policy --role-name roleA  --policy-name roleA-policy --policy-document file://role-a-policy.json
 
 # Create roleB with trust
 aws iam create-role --role-name roleB --assume-role-policy-document file://role-b-trust.json
 
-# add the policy to the role in one step
+# add the policy to the role in one step - creates an inline policy
 aws iam put-role-policy --role-name roleB  --policy-name roleB-policy --policy-document file://role-b-policy.json
 
 # assume the role

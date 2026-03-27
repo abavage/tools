@@ -6,7 +6,7 @@ policy.json - what it can do
 # create the role and trust
 aws iam create-role --role-name s3rolebasic  --assume-role-policy-document file://trust.json
 
-# add the policy to the role in one step
+# add the policy to the role in one step - creates an inline policy
 aws iam put-role-policy --role-name s3rolebasic --policy-name s3rolebasicpolicy --policy-document file://policy.json
 
 # assume the role as the user -- someuser from Principal in trust.json

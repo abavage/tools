@@ -5,7 +5,7 @@ s3-policy.json - the resources accessable
 # Create the Instance Role
 aws iam create-role --role-name EC2S3AccessRole --assume-role-policy-document file://ec2-trust-policy.json
 
-# Attach the S3 policy directly to the Instance Role
+# Attach the S3 policy directly to the Instance Role - creates an inline policy
 aws iam put-role-policy --role-name EC2S3AccessRole --policy-name S3GetListPolicy --policy-document file://s3-policy.json
 
 # Create Instance Profile 
