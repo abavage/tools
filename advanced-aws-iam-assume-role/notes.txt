@@ -1,14 +1,6 @@
-# create the policy
-aws iam create-policy --policy-name instance-s3readonly-policy --policy-document file://instance-policy.json --query 'Policy.Arn'
-
-# attach the policy to the role -- this is attached to the role s3readonlyrole
-aws iam attach-role-policy --policy-arn arn:aws:iam::559050246145:policy/instance-s3readonly-policy --role-name instance-s3readonly-role
-
-
-
 
 # flow
-1) Use RoleA trustpolicy to become RoleA
+1) Use RoleA trustpolicy to assume RoleA
 2) RoleA uses it's permission policy to request access to RoleB
 3) RoleB uses it's trust policy to veriy it knows and trusts RoleA
 4) STS issues temporary creds for RoleB
