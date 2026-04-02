@@ -1,0 +1,38 @@
+# rosa create idp --type htpasswd --name jjj-special -u andrew:Thetoday19-Password.2 --cluster one
+---
+apiVersion: user.openshift.io/v1
+kind: Group
+metadata:
+  name: users
+users:
+- andrew
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: admin
+  namespace: andrew
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: admin
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: users
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: custom-cluster-reader
+subjects:
+- kind: Group
+  name: users
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: cluster-reader
+  apiGroup: rbac.authorization.k8s.io
+
