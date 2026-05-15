@@ -1,0 +1,22 @@
+apiVersion: aap.ansible.com/v1alpha1
+kind: AnsibleAutomationPlatform
+metadata:
+  name: <name of the aap>
+  namespace: aap
+spec:
+  api:
+    log_level: INFO
+    replicas: 1
+  controller:
+    disabled: false
+    name: <name of the automationcontroller>
+  eda:
+    disabled: true
+  hub:
+    disabled: false
+    name: <name of the automationhub>
+  ingress_type: Route
+  no_log: false
+  redis_mode: standalone
+  route_host: <fqdn of the route>
+  route_tls_termination_mechanism: Edge
