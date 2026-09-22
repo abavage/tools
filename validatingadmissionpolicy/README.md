@@ -34,14 +34,14 @@ The policy (`validate-pdb-configuration`) enforces two rules:
 Apply the policy and binding to your cluster:
 
 ```bash
-kubectl apply -f validating-admission.yaml
-kubectl apply -f validatingadmissionpolicybinding.yaml
+oc apply -f validating-admission.yaml
+oc apply -f validatingadmissionpolicybinding.yaml
 ```
 
 Test that the policy rejects the example bad PDB:
 
 ```bash
-kubectl apply -f pdb.yaml
+oc apply -f pdb.yaml
 # Expected: admission webhook denied the request — maxUnavailable cannot be 0 or 0%
 ```
 
