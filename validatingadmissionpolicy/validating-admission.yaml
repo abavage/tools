@@ -15,10 +15,10 @@ spec:
         !has(object.spec.maxUnavailable) ||
         (type(object.spec.maxUnavailable) == int && object.spec.maxUnavailable > 0) ||
         (type(object.spec.maxUnavailable) == string && object.spec.maxUnavailable != "0%")
-      message: "maxUnavailable cannot be 0 or 0% as it completely blocks node drains."
+      message: "maxUnavailable cannot be 0 or 0% as it completely blocks node drains. See this link for more information..."
       
     - expression: |
         !has(object.spec.minAvailable) ||
         (type(object.spec.minAvailable) == int && object.spec.minAvailable == 0) ||
         (type(object.spec.minAvailable) == string && object.spec.minAvailable != "100%")
-      message: "minAvailable cannot be greater than 0 or 100% as it prevents voluntary disruptions."
+      message: "minAvailable cannot be greater than 0 or 100% as it prevents voluntary disruptions. See this link for more information..."
