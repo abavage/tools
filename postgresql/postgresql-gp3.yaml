@@ -5,7 +5,6 @@ metadata:
   labels:
     app: ab-postgresql
   name: ab-postgresql
-  namespace: andrew-1
 spec:
   progressDeadlineSeconds: 600
   replicas: 1
@@ -40,7 +39,7 @@ spec:
             secretKeyRef:
               key: database-name
               name: postgresql
-        image: image-registry.openshift-image-registry.svc:5000/openshift/postgresql@sha256:ed2da0eed3f495f5455f490cdf7f7943420f64b0cf541271a2d315a3f9e9744c
+        image: registry.redhat.io/rhel8/postgresql-13@sha256:f975bcfc549728776d3c27d1f545a33063992ad5721b5d9ee7aad3c89d3f7bde
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:
@@ -91,7 +90,6 @@ data:
 kind: Secret
 metadata:
   name: postgresql
-  namespace: andrew-1
 type: Opaque
 ---
 apiVersion: v1
@@ -100,7 +98,6 @@ metadata:
   labels:
     template: postgresql-persistent-template
   name: postgresql
-  namespace: andrew-1
 spec:
   internalTrafficPolicy: Cluster
   ipFamilies:
@@ -121,7 +118,6 @@ kind: PersistentVolumeClaim
 metadata:
   name: postgresql
   #name: one
-  namespace: andrew-1
 spec:
   accessModes:
   - ReadWriteOnce

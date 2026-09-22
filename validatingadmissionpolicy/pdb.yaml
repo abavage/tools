@@ -1,0 +1,12 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: downloads
+  namespace: test
+spec:
+  maxUnavailable: 0
+  #minAvailable: 0
+  selector:
+    matchLabels:
+      app: tools
+  unhealthyPodEvictionPolicy: AlwaysAllow

@@ -1,0 +1,10 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: validate-pdb-configuration-binding
+spec:
+  policyName: validate-pdb-configuration
+  validationActions: [Deny]
+  matchResources:
+    namespaceSelector: {} # all namespaces
+

@@ -1,0 +1,24 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: validate-pdb-configuration
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ["policy"]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["poddisruptionbudgets"]
+  validations:
+    - expression: |
+        !has(object.spec.maxUnavailable) ||
+        (type(object.spec.maxUnavailable) == int && object.spec.maxUnavailable > 0) ||
+        (type(object.spec.maxUnavailable) == string && object.spec.maxUnavailable != "0%")
+      message: "maxUnavailable cannot be 0 or 0% as it completely blocks node drains."
+      
+    - expression: |
+        !has(object.spec.minAvailable) ||
+        (type(object.spec.minAvailable) == int && object.spec.minAvailable == 0) ||
+        (type(object.spec.minAvailable) == string && object.spec.minAvailable != "100%")
+      message: "minAvailable cannot be greater than 0 or 100% as it prevents voluntary disruptions."
